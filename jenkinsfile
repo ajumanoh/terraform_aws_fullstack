@@ -1,5 +1,9 @@
+
 pipeline {
     agent any
+    tools {
+        terraform 'terraform-15'
+    }
 
     parameters {
         string(name: 'environment', defaultValue: 'default',
@@ -20,8 +24,8 @@ pipeline {
                 script {
                     currentBuild.displayName = params.version
                 }
-                sh 'terraform init -input=false'
-                //            sh 'terraform workspace select ${environment}'
+                sh 'terraform init'
+                sh 'terraform workspace select ${environment}'
                 sh "terraform plan -out tfplan --var-file=environments/${params.environment}.tfvars"
                 sh 'terraform show -no-color tfplan > tfplan.txt'
             }
