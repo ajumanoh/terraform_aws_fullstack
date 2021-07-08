@@ -5,4 +5,6 @@ This will create the following resources -
 
 Note - Terraform back end is not confugured. You can add backend such as Counsul or S3 with Dynamo DB if amultiple people are working on the same code. This will ensure that the terraform stage file is locked and not overwritten by users if they try to update at the same time.
 
+Also back end DB is not created. Only security group is created.
+
 Also the resources can be created in separate modules for better reusability and maintainability.
