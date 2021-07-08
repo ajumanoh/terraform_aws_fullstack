@@ -1,6 +1,6 @@
 This will create the following resources -
 1. A New VPC with 2 subnets in two availability zones 
-2. An ALB infront of an ASG with a target group of with two webservers spanning accross two AZs
+2. An ALB infront of an ASG with a target group having two webservers spanning accross two AZs
 3. Output - DNS of the ALB.
 
 Note - Terraform back end is not confugured. You can add backend such as Counsul or S3 with Dynamo DB if amultiple people are working on the same code. This will ensure that the terraform stage file is locked and not overwritten by users if they try to update at the same time.
