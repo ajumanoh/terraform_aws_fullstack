@@ -25,6 +25,7 @@ pipeline {
                     equals expected: true, actual: params.destroy
             }
             steps {
+                sh label: '', script: 'terraform init'
                 sh label: '', script: 'terraform destroy -auto-approve '
             }
         }
