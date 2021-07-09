@@ -1,4 +1,3 @@
-
 pipeline {
     agent any
     tools {
@@ -10,6 +9,8 @@ pipeline {
         description: 'Workspace/environment file to use for deployment')
         booleanParam(name: 'autoApprove', defaultValue: false,
         description: 'Automatically run apply after generating plan?')
+        booleanParam(name: 'destroy', defaultValue: false,
+        description: 'destroy resources before build?')
     }
 
     environment {
@@ -19,20 +20,34 @@ pipeline {
     }
 
     stages {
+        stage('Destroy') {
+            when {
+                    equals expected: true, actual: params.destroy
+            }
+            steps {
+                sh label: '', script: 'terraform destroy -auto-approve '
+            }
+        }
+
+        stage('Git checkout') {
+            steps {
+                git 'https://github.com/ajumanoh/terraform_aws_fullstack'
+            }
+        }
+
         stage('Plan') {
             steps {
                 script {
                     currentBuild.displayName = params.version
                 }
-                sh 'terraform init'
-                sh 'terraform workspace select ${environment}'
-                sh "terraform plan -out tfplan --var-file=environments/${params.environment}.tfvars"
-                sh 'terraform show -no-color tfplan > tfplan.txt'
+                sh label: '', script: 'terraform init'
+                sh label: '', script: 'terraform workspace select ${environment}'
+                sh label: '', script: 'terraform plan -out tfplan'
+                sh label: '', script: 'terraform show -no-color tfplan > tfplan.txt'
             }
         }
-    }
 
-/*        stage('Approval') {
+        stage('Approval') {
             when {
                 not {
                     equals expected: true, actual: params.autoApprove
@@ -46,19 +61,20 @@ pipeline {
                         parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
                 }
             }
-}
+        }
 
         stage('Apply') {
             steps {
-                sh 'terraform apply -input=false tfplan'
+                sh label: '', script: 'terraform apply -input=false tfplan'
             }
         }
-}
-
+    }
     post {
-        always {
-            archiveArtifacts artifacts: 'tfplan.txt'
+        success {
+            sh label: '', script: "echo 'Send email on success'"
+        }
+        failure {
+            sh label: '', script: "echo 'Send email on failure'"
         }
     }
-    */
 }
