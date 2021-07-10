@@ -1,11 +1,17 @@
 terraform {
+    backend "s3" {
+    bucket = "terraformajumano"
+    key    = "fullstack/dev/terraform.tfstate"
+    region = "us-east-1"
+    dynamodb_table = "terraformstate"
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
       version = "~> 3.48"
     }
   }
-
   required_version = ">= 0.15.5"
 }
 
